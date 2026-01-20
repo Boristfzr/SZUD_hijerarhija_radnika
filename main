@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #define MAX_NAME_LENGTH 100
 
 typedef struct Radnik {
@@ -7,7 +10,7 @@ typedef struct Radnik {
     struct Radnik* sledeci;     
 } Radnik;
 
-Radnik* novi_radnik(const char* ime) {
+Radnik* kreiraj_radnika(const char* ime) {
     Radnik* r = (Radnik*)malloc(sizeof(Radnik));
     strncpy(r->ime, ime, MAX_NAME_LENGTH);
     r->menadzer = NULL;
@@ -16,18 +19,26 @@ Radnik* novi_radnik(const char* ime) {
     return r;
 }
 
-void dodaj_podredjenog(Radnik* menadzer, Radnik* podredjeni) {
-    podredjeni->menadzer = menadzer;
-    if (menadzer->podredjeni == NULL) {
-        menadzer->podredjeni = podredjeni;
-    } else {
-        Radnik* poslednji = menadzer->podredjeni;
-        while (poslednji->sledeci != NULL) {
-            poslednji = poslednji->sledeci;
-        }
-        poslednji->sledeci = podredjeni;
-    }
+Radnik* pronadji_radnika(Radnik* radnik, const char* ime) {
+    if (radnik == NULL) return NULL;
+    if (strcmp(radnik->ime, ime) == 0) return radnik;
+    
+    Radnik* pronadjen = pronadji_radnika(radnik->podredjeni, ime);
+    if (pronadjen != NULL) return pronadjen;
+    
+    return pronadji_radnika(radnik->sledeci, ime);
 }
+
+
+
+void dodaj_radnika(Radnik* menadzer) {
+    char ime[MAX_NAME_LENGTH];
+    printf("Unesite ime novog radnika: ");
+    scanf("%s", ime);
+    Radnik* novi_radnik = kreiraj_radnika(ime);
+    dodaj_podredjenog(menadzer, novi_radnik);
+}
+
 
 void ispis_hijerarhije(Radnik* radnik, int nivo) {
     if (radnik == NULL) return;
@@ -57,8 +68,22 @@ int main() {
     dodaj_podredjenog(menadzer2, zaposleni3);
     
 
-    printf("Hijerarhija u kompaniji:\n");
+     printf("Trenutna hijerarhija:\n");
     ispis_hijerarhije(direktor, 0);
+
+     printf("\nUnesite ime menadžera pod kojim želite da dodate novog radnika: ");
+    char ime_menadzera[MAX_NAME_LENGTH];
+    scanf("%s", ime_menadzera);
+
+    Radnik* menadzer = pronadji_radnika(direktor, ime_menadzera);
+    if (menadzer != NULL) {
+        dodaj_radnika(menadzer);
+        printf("\nAžurirana hijerarhija:\n");
+        ispis_hijerarhije(direktor, 0);
+    } else {
+        printf("Menadžer sa imenom %s nije pronađen.\n", ime_menadzera);
+    }
+
 
     free(direktor);
     free(menadzer1);
