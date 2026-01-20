@@ -1,0 +1,65 @@
+#define MAX_NAME_LENGTH 100
+
+typedef struct Radnik {
+    char ime[MAX_NAME_LENGTH];  
+    struct Radnik* menadzer;   
+    struct Radnik* podredjeni;  
+    struct Radnik* sledeci;     
+} Radnik;
+
+Radnik* novi_radnik(const char* ime) {
+    Radnik* r = (Radnik*)malloc(sizeof(Radnik));
+    strncpy(r->ime, ime, MAX_NAME_LENGTH);
+    r->menadzer = NULL;
+    r->podredjeni = NULL;
+    r->sledeci = NULL;
+    return r;
+}
+
+void dodaj_podredjenog(Radnik* menadzer, Radnik* podredjeni) {
+    podredjeni->menadzer = menadzer;
+    if (menadzer->podredjeni == NULL) {
+        menadzer->podredjeni = podredjeni;
+    } else {
+        Radnik* poslednji = menadzer->podredjeni;
+        while (poslednji->sledeci != NULL) {
+            poslednji = poslednji->sledeci;
+        }
+        poslednji->sledeci = podredjeni;
+    }
+}
+
+void ispis_hijerarhije(Radnik* radnik, int nivo) {
+    if (radnik == NULL) return;
+
+    for (int i = 0; i < nivo; i++) {
+        printf("  ");
+    }
+    printf("%s\n", radnik->ime);
+
+    ispis_hijerarhije(radnik->podredjeni, nivo + 1);
+    
+    ispis_hijerarhije(radnik->sledeci, nivo);
+}
+
+int main() {
+    Radnik* direktor = novi_radnik("Direktor");
+    Radnik* menadzer1 = novi_radnik("Menadžer 1");
+    Radnik* zaposleni1 = novi_radnik("Zaposleni 1");
+    Radnik* zaposleni2 = novi_radnik("Zaposleni 2");
+
+    dodaj_podredjenog(direktor, menadzer1);
+    
+    dodaj_podredjenog(menadzer1, zaposleni1);
+    dodaj_podredjenog(menadzer1, zaposleni2);
+    
+
+    printf("Hijerarhija u kompaniji:\n");
+    ispis_hijerarhije(direktor, 0);
+
+    free(direktor);
+    free(menadzer1);
+    free(zaposleni1);
+    free(zaposleni2);
+
+    return 0;
