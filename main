@@ -45,6 +45,7 @@ void ispis_hijerarhije(Radnik* radnik, int nivo) {
 int main() {
     Radnik* direktor = novi_radnik("Direktor");
     Radnik* menadzer1 = novi_radnik("Menadžer 1");
+    Radnik* menadzer2 = novi_radnik("Menadžer 2");
     Radnik* zaposleni1 = novi_radnik("Zaposleni 1");
     Radnik* zaposleni2 = novi_radnik("Zaposleni 2");
 
@@ -52,6 +53,7 @@ int main() {
     
     dodaj_podredjenog(menadzer1, zaposleni1);
     dodaj_podredjenog(menadzer1, zaposleni2);
+     dodaj_podredjenog(menadzer2);
     
 
     printf("Hijerarhija u kompaniji:\n");
