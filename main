@@ -34,9 +34,20 @@ Radnik* pronadji_radnika(Radnik* radnik, const char* ime) {
 void dodaj_radnika(Radnik* menadzer) {
     char ime[MAX_NAME_LENGTH];
     printf("Unesite ime novog radnika: ");
-    scanf("%s", ime);
-    Radnik* novi_radnik = kreiraj_radnika(ime);
-    dodaj_podredjenog(menadzer, novi_radnik);
+    printf("Unesite ime novog radnika (npr. 'Jelena - Zaposleni'): ");
+    scanf(" %[^\n]", ime); // čita ceo red sa razmacima
+
+    const char* suffix = " - Zaposleni";
+    int ime_len = strlen(ime);
+    int suffix_len = strlen(suffix);
+
+    if (ime_len >= suffix_len && strcmp(ime + ime_len - suffix_len, suffix) == 0) {
+        Radnik* novi_radnik = kreiraj_radnika(ime);
+        dodaj_podredjenog(menadzer, novi_radnik);
+        printf("Radnik je uspešno dodat.\n");
+    } else {
+        printf("Neispravan format imena! Radnik mora imati sufiks '- Zaposleni'.\n");
+    }
 }
 
 
@@ -54,12 +65,12 @@ void ispis_hijerarhije(Radnik* radnik, int nivo) {
 }
 
 int main() {
-    Radnik* direktor = novi_radnik("Direktor");
-    Radnik* menadzer1 = novi_radnik("Menadžer 1");
-    Radnik* menadzer2 = novi_radnik("Menadžer 2");
-    Radnik* zaposleni1 = novi_radnik("Zaposleni 1");
-    Radnik* zaposleni2 = novi_radnik("Zaposleni 2");
-    Radnik* zaposleni3 = novi_radnik("Zaposleni 3");
+    Radnik* direktor = kreiraj_radnika("Zoran - Direktor");
+    Radnik* menadzer1 = kreiraj_radnika("Dragan - Menadžer");
+    Radnik* menadzer2 = kreiraj_radnika("Ljubica - Menadžer");
+    Radnik* zaposleni1 = kreiraj_radnika("Radoslav - Zaposleni");
+    Radnik* zaposleni2 = kreiraj_radnika("Boris - Zaposleni");
+    Radnik* zaposleni3 = kreiraj_radnika("Marko - Zaposleni");
 
     dodaj_podredjenog(direktor, menadzer1);
     
