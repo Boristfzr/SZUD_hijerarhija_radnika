@@ -34,7 +34,7 @@ Radnik* pronadji_radnika(Radnik* radnik, const char* ime) {
 void dodaj_radnika(Radnik* menadzer) {
     char ime[MAX_NAME_LENGTH];
     printf("Unesite ime novog radnika: ");
-    scanf("%s", ime);
+    scanf(" %[^\n]", ime);
     Radnik* novi_radnik = kreiraj_radnika(ime);
     dodaj_podredjenog(menadzer, novi_radnik);
 }
@@ -62,44 +62,63 @@ int main() {
     Radnik* zaposleni3 = novi_radnik("Zaposleni 3");
 
     dodaj_podredjenog(direktor, menadzer1);
+    dodaj_podredjenog(direktor, menadzer2);
     
     dodaj_podredjenog(menadzer1, zaposleni1);
     dodaj_podredjenog(menadzer1, zaposleni2);
     dodaj_podredjenog(menadzer2, zaposleni3);
     
 
-    printf("Unesite ime radnika za pretragu: ");
+    int izbor;
     char ime[MAX_NAME_LENGTH];
-    scanf("%s", ime);
 
-    
-    Radnik* radnik = pronadji_radnika(direktor, ime);
-    if (radnik != NULL) {
-        printf("Radnik %s je pronađen\n", ime);
-    } else {
-        printf("Radnik nije pronađen\n");
+        while (1) {
+        printf("\n===== GLAVNI MENI =====\n");
+        printf("[1] Ispis firme\n");
+        printf("[2] Novi zaposleni\n");
+        printf("[3] Obrisi zaposlenog\n");
+        printf("[0] Kraj programa\n");
+        printf("Vas izbor: ");
+        scanf("%d", &izbor);
+        getchar();
 
+        switch (izbor) {
+            case 1:
+                printf("\nHijerarhija firme:\n");
+                ispis_hijerarhije(direktor, 0);
+                break;
 
-     printf("\nUnesite ime menadžera pod kojim želite da dodate novog radnika: ");
-    char ime_menadzera[MAX_NAME_LENGTH];
-    scanf("%s", ime_menadzera);
+            case 2:
+                printf("\nUnesite ime menadžera: ");
+                scanf(" %[^\n]", ime);
 
-    Radnik* menadzer = pronadji_radnika(direktor, ime_menadzera);
-    if (menadzer != NULL) {
-        dodaj_radnika(menadzer);
-        printf("\nAžurirana hijerarhija:\n");
-        ispis_hijerarhije(direktor, 0);
-    } else {
-        printf("Menadžer sa imenom %s nije pronađen.\n", ime_menadzera);
-    }
+                Radnik* menadzer = pronadji_radnika(direktor, ime);
+                if (menadzer != NULL) {
+                    dodaj_radnika(menadzer);
+                } else {
+                    printf("Menadžer nije pronađen.\n");
+                }
+                break;
 
+            case 3:
+                printf("\nUnesite ime radnika za uklanjanje: ");
+                scanf(" %[^\n]", ime);
 
-    free(direktor);
-    free(menadzer1);
-    free(menadzer2);
-    free(zaposleni1);
-    free(zaposleni2);
-    free(zaposleni3);
+                if (!ukloni_radnika(direktor, ime)) {
+                    printf("Radnik nije pronađen.\n");
+                }
+                break;
+
+            case 4:
+                printf("Izlaz iz programa.\n");
+                break;
+
+            default:
+                printf("Neispravan izbor!\n");
+        }
+    } while (izbor != 4);
+
+     free(direktor);
+
+         return 0;
 }
-
-    return 0;
