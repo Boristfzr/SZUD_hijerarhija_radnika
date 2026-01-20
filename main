@@ -50,6 +50,38 @@ void dodaj_radnika(Radnik* menadzer) {
     }
 }
 
+int ukloni_radnika(Radnik* menadzer, const char* ime) {
+    if (menadzer == NULL) return 0;
+
+    Radnik* prethodni = NULL;
+    Radnik* trenutni = menadzer->podredjeni;
+
+    while (trenutni != NULL) {
+        if (strcmp(trenutni->ime, ime) == 0) {
+
+            if (prethodni == NULL) {
+                menadzer->podredjeni = trenutni->sledeci;
+            } else {
+                prethodni->sledeci = trenutni->sledeci;
+            }
+
+            free(trenutni);
+            printf("Radnik '%s' je uspešno uklonjen.\n", ime);
+            return 1;
+        }
+
+        // 🔁 REKURZIJA – tražimo kod podređenih
+        if (ukloni_radnika(trenutni, ime)) {
+            return 1;
+        }
+
+        prethodni = trenutni;
+        trenutni = trenutni->sledeci;
+    }
+
+
+
+
 
 void ispis_hijerarhije(Radnik* radnik, int nivo) {
     if (radnik == NULL) return;
@@ -77,12 +109,19 @@ int main() {
     dodaj_podredjenog(menadzer1, zaposleni1);
     dodaj_podredjenog(menadzer1, zaposleni2);
     dodaj_podredjenog(menadzer2, zaposleni3);
+
+
+    printf("Trenutna hijerarhija:\n");
+    ispis_hijerarhije(direktor, 0);
+
+    printf("\nUnesite ime radnika kojeg želite da uklonite: ");
+    char ime_radnika[MAX_NAME_LENGTH];
+    scanf(" %[^\n]", ime_radnika);
+
+    ukloni_radnika(direktor, ime_radnika);
     
-
-    printf("Unesite ime radnika za pretragu: ");
-    char ime[MAX_NAME_LENGTH];
-    scanf("%s", ime);
-
+    printf("\nAžurirana hijerarhija:\n");
+    ispis_hijerarhije(direktor, 0);
     
     Radnik* radnik = pronadji_radnika(direktor, ime);
     if (radnik != NULL) {
@@ -93,7 +132,7 @@ int main() {
 
      printf("\nUnesite ime menadžera pod kojim želite da dodate novog radnika: ");
     char ime_menadzera[MAX_NAME_LENGTH];
-    scanf("%s", ime_menadzera);
+    scanf(|"%[^\n", ime_menadzera);
 
     Radnik* menadzer = pronadji_radnika(direktor, ime_menadzera);
     if (menadzer != NULL) {
@@ -103,7 +142,7 @@ int main() {
     } else {
         printf("Menadžer sa imenom %s nije pronađen.\n", ime_menadzera);
     }
-
+    
 
     free(direktor);
     free(menadzer1);
@@ -111,6 +150,6 @@ int main() {
     free(zaposleni1);
     free(zaposleni2);
     free(zaposleni3);
+    }
 }
-
     return 0;
