@@ -68,8 +68,17 @@ int main() {
     dodaj_podredjenog(menadzer2, zaposleni3);
     
 
-     printf("Trenutna hijerarhija:\n");
-    ispis_hijerarhije(direktor, 0);
+    printf("Unesite ime radnika za pretragu: ");
+    char ime[MAX_NAME_LENGTH];
+    scanf("%s", ime);
+
+    
+    Radnik* radnik = pronadji_radnika(direktor, ime);
+    if (radnik != NULL) {
+        printf("Radnik %s je pronađen\n", ime);
+    } else {
+        printf("Radnik nije pronađen\n");
+
 
      printf("\nUnesite ime menadžera pod kojim želite da dodate novog radnika: ");
     char ime_menadzera[MAX_NAME_LENGTH];
